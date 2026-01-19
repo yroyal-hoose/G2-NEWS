@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Covid19 Tracker</title>
+	<link rel="icon" href="../images/Logo.png" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/c4f4b38242.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="../assets/css/covid.css">
+    
+</head>
+<body>
+<div class="container">
+	<a href="../index.html">
+	<img src="../images/Logo.png" id="logo" alt="BhaukaalNews">
+	</a>
+	<h1 class="heading">
+		<span class="covid-19">COVID-19</span><br>
+		<span class="ind">INDIA</span>
+	</h1><div class="total-case-box">
+		<div id="conf">
+			<div class="icon-box">
+				<i class="fa fa-users" id="conf" ></i>
+			</div>
+			<span class="com"><b>CONFIRMED</b></span><br>
+			<span class="total-cases com"><b>0</b></span>
+		</div>
+		<div id="act">
+			<div class="icon-box" >
+				<i class="fa fa-bell" id="act"></i>
+			</div>
+			<span class="com"><b>ACTIVE</b></span><br>
+			<span class="active-cases com"><b>0</b></span>
+		</div>
+		<div id="rec">
+			<div class="icon-box" >
+				<i class="fa fa-child" id="rec"></i>
+			</div>
+			<span class="com"><b>RECOVERED</b></span><br>
+			<span class="recovered com"><b>0</b></span>
+		</div>
+		<div id="det">
+			<div class="icon-box" >
+				<i class="fa fa-procedures" id="det"></i>
+			</div>
+			<span class="com"><b>DEATHS</b></span><br>
+			<span class="total-deaths com"><b>0</b></span>
+		</div>
+	</div>	
+	<div id="mess">
+		Compiled from State Govt. numbers.
+	</div>
+	<!--table for statwise track-->
+	<table>
+		<tr>
+			
+			<th><b>UPDATE TIME</b></th>
+			<th><b>STATE/UT</b></th>
+			<th id="conf"><b>TOTAL</b></th>
+			<th id="act"><b>ACTIVE</b></th>
+			<th id="rec"><b>RECOVERED</b></th>
+			<th id="det"><b>DEATHS</b></th>
+		</tr>
+	</table>
+	<div id="end">
+	we Stand with everyone fighting on the frontlines.
+	<img src="../images/CORONA-WARRIORS.jpg" id="fighter">
+</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		const total_cases=$(".total-cases");
+		const total_deaths=$(".total-deaths");
+		const recovered=$(".recovered");
+		const active_cases=$(".active-cases");
+		var length;
+		$.get("https://api.covid19india.org/data.json",function(response){
+			var response=response;
+			length=response.statewise.length;
+			function indian_number(n)
+			{
+				var a=[];
+				var len=0;
+				while(n>0)
+				{
+    				a.push(n%10);
+    				len++;
+    				n=Math.floor(n/10);
+				}
+				var b=[];
+				while(len>3)
+				{
+    				if(len%2==1)
+    				{
+        				b+=a[len-1]+""+a[len-2]+",";
+        				len-=2;
+    				}
+    				else
+    				{
+        				b+=a[len-1]+",";
+        				len-=1;
+    				}
+				}
+				var i;
+				for(i=1;i<=len;i++)
+				{
+    				b+=a[len-i]+"";
+				}
+				if (b==""){
+				return 0;}
+				else{
+					return b;
+				}
+			}
+			total_cases.html(indian_number(response.statewise[0].confirmed));
+			total_deaths.html(indian_number(response.statewise[0].deaths));
+			recovered.html(indian_number(response.statewise[0].recovered));
+			active_cases.html(indian_number(response.statewise[0].active));
+		for (var i=1;i<=length;i++)
+		{
+			$("table").append("<tr><td>"+response.statewise[i].lastupdatedtime+"</td><td>"+response.statewise[i].state+"</td><td>"+indian_number(response.statewise[i].confirmed)+"</td><td>"+indian_number(response.statewise[i].active)+"</td><td>"+indian_number(response.statewise[i].recovered)+"</td><td>"+indian_number(response.statewise[i].deaths)+"</td></tr>");
+		}
+		});
+	});
+</script>
+</body>
+</html>
